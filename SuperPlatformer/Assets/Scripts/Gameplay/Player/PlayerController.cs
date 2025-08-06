@@ -1,20 +1,18 @@
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
 using UnityEngine;
 using Core.Input;
+using SuperPlatformer.Core.Physics;
 
 namespace Gameplay.Player
 {
-    /// &lt;summary&gt;
+    /// <summary>
     /// Handles player movement and state machine, using movement parameters from PlayerConstants.
-    /// &lt;/summary&gt;
+    /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
+    [RequireComponent(typeof(BoxCollider2D))]
     public class PlayerController : MonoBehaviour
     {
         public enum PlayerState { Grounded, Jumping, Falling }
-
-        [Header("Testing/Override Fields")]
-        [Tooltip("If true, the player is considered on the ground (debug only, replace with PhysicsEngine2D CheckGrounded in future).")]
-        public bool isGroundedDebug = true;
 
         [Header("Movement Parameters (defaults from PlayerConstants)")]
         [Tooltip("WALK_SPEED: 2.5 tiles/s (PRD §6.2)")]
@@ -43,10 +41,14 @@ namespace Gameplay.Player
 
         [Header("References")]
         public Rigidbody2D rb;
+        [SerializeField] private BoxCollider2D boxCollider;
 
         // Internal state
         private PlayerState currentState = PlayerState.Grounded;
         private Vector2 velocity = Vector2.zero;
+
+        // Expose velocity for CameraFollow2D
+        public Vector2 Velocity => velocity;
 
         // Timers for coyote time and jump buffering
         private float coyoteTimer = 0f;
@@ -58,6 +60,8 @@ namespace Gameplay.Player
         {
             if (rb == null)
                 rb = GetComponent<Rigidbody2D>();
+            if (boxCollider == null)
+                boxCollider = GetComponent<BoxCollider2D>();
         }
 
         void Update()
@@ -68,8 +72,9 @@ namespace Gameplay.Player
             InputManager.InputState input = InputManager.Instance != null ? InputManager.Instance.Current : default;
 
             // Update timers
-            bool grounded = isGroundedDebug;
-            // TODO: Replace with: grounded = Core.Physics.PhysicsEngine2D.CheckGrounded(...);
+
+            // Use new deterministic physics grounded check
+            bool grounded = PhysicsEngine2D.CheckGrounded(GetBounds());
 
             if (grounded)
                 coyoteTimer = coyoteTime;
@@ -97,7 +102,7 @@ namespace Gameplay.Player
                     }
                     break;
                 case PlayerState.Jumping:
-                    if (velocity.y &lt;= 0)
+                    if (velocity.y <= 0)
                     {
                         currentState = PlayerState.Falling;
                     }
@@ -130,18 +135,33 @@ namespace Gameplay.Player
             if (!input.jumpHeld && velocity.y > 0)
                 velocity.y -= gravity * 2f * Time.deltaTime; // fast fall when jump released early
 
-            // Apply velocity
-            Vector2 delta = velocity * Time.deltaTime;
-            Vector2 newPosition = (Vector2)transform.position + delta;
+            // --- Deterministic physics integration ---
+            var moveResult = PhysicsEngine2D.Move(GetBounds(), velocity * Time.deltaTime);
+            transform.position += (Vector3)moveResult.allowedDelta;
+            if (moveResult.hitGround) velocity.y = 0;
+            if (moveResult.hitLeft || moveResult.hitRight) velocity.x = 0;
+            grounded = PhysicsEngine2D.CheckGrounded(GetBounds());
 
-            // TODO: Replace with Core.Physics.PhysicsEngine2D.ResolveCollisions(...) once ready
-            transform.position = newPosition;
         }
 
         void Jump()
         {
             velocity.y = jumpInitialVelocity;
             coyoteTimer = 0;
+        }
+
+        /// <summary>
+        /// Returns the world-space bounds of the player collider.
+        /// </summary>
+        public Bounds GetBounds()
+        {
+            if (boxCollider != null)
+                return boxCollider.bounds;
+            // fallback: compute from transform/sprite (not recommended)
+            var sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+                return sr.bounds;
+            return new Bounds(transform.position, Vector3.one * 0.9f);
         }
     }
 }

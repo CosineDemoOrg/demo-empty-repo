@@ -1,10 +1,11 @@
 using UnityEngine;
+using Gameplay.Player;
 
 namespace SuperPlatformer.Gameplay
 {
-    /// &lt;summary&gt;
+    /// <summary>
     /// Smooth camera follow with deadzone and lookahead.
-    /// &lt;/summary&gt;
+    /// </summary>
     public class CameraFollow2D : MonoBehaviour
     {
         public Transform target;
@@ -15,6 +16,14 @@ namespace SuperPlatformer.Gameplay
 
         private Vector3 _currentVelocity;
         private Vector3 _lookAhead;
+
+        private PlayerController player;
+
+        void Start()
+        {
+            if (target != null)
+                player = target.GetComponent<PlayerController>();
+        }
 
         void LateUpdate()
         {
@@ -29,15 +38,14 @@ namespace SuperPlatformer.Gameplay
 
             Vector3 delta = tgtPos - camPos;
             Vector3 offset = Vector3.zero;
-            if (Mathf.Abs(delta.x) &gt; dzW)
+            if (Mathf.Abs(delta.x) > dzW)
                 offset.x = delta.x - Mathf.Sign(delta.x) * dzW;
-            if (Mathf.Abs(delta.y) &gt; dzH)
+            if (Mathf.Abs(delta.y) > dzH)
                 offset.y = delta.y - Mathf.Sign(delta.y) * dzH;
 
             // Lookahead (horizontal velocity only)
-            var pc = target.GetComponent&lt;PlayerController&gt;();
-            if (pc != null &amp;&amp; Mathf.Abs(pc.Velocity.x) &gt; 0.01f)
-                _lookAhead.x = lookAheadDist * tileSize * Mathf.Sign(pc.Velocity.x);
+            if (player != null && Mathf.Abs(player.Velocity.x) > 0.01f)
+                _lookAhead.x = lookAheadDist * tileSize * Mathf.Sign(player.Velocity.x);
             else
                 _lookAhead.x = Mathf.MoveTowards(_lookAhead.x, 0, Time.deltaTime * tileSize * 8);
 
