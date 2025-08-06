@@ -6,44 +6,44 @@ namespace Gameplay.Player
     /// &lt;/summary&gt;
     public static class PlayerConstants
     {
-        /// &lt;summary&gt;
-        /// WALK_SPEED = 4.0 tiles/sec (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float WALK_SPEED = 4.0f;
+        /// <summary>
+        /// WALK_SPEED = 2.5 tiles/sec (PRD §6.2)
+        /// </summary>
+        public static readonly float WALK_SPEED = 2.5f;
 
-        /// &lt;summary&gt;
-        /// RUN_SPEED = 6.5 tiles/sec (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float RUN_SPEED = 6.5f;
+        /// <summary>
+        /// RUN_SPEED = 4.0 tiles/sec (PRD §6.2)
+        /// </summary>
+        public static readonly float RUN_SPEED = 4.0f;
 
-        /// &lt;summary&gt;
-        /// RUN_ACCEL_TIME = 0.18 sec to reach full run speed (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float RUN_ACCEL_TIME = 0.18f;
+        /// <summary>
+        /// RUN_ACCEL_TIME = 0.5 sec to reach full run speed (PRD §6.2, derived)
+        /// </summary>
+        public static readonly float RUN_ACCEL_TIME = 0.5f;
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// GRAVITY = 30.0 tiles/sec² downward (PRD §6.2)
-        /// &lt;/summary&gt;
+        /// </summary>
         public static readonly float GRAVITY = 30.0f;
 
-        /// &lt;summary&gt;
-        /// JUMP_INITIAL_VELOCITY = 10.0 tiles/sec upward (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float JUMP_INITIAL_VELOCITY = 10.0f;
+        /// <summary>
+        /// JUMP_INITIAL_VELOCITY = 8.5 tiles/sec upward (PRD §6.2)
+        /// </summary>
+        public static readonly float JUMP_INITIAL_VELOCITY = 8.5f;
 
-        /// &lt;summary&gt;
-        /// COYOTE_TIME = 0.08 sec grace window after leaving ground (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float COYOTE_TIME = 0.08f;
+        /// <summary>
+        /// COYOTE_TIME = 0.10 sec grace window after leaving ground (PRD §6.2)
+        /// </summary>
+        public static readonly float COYOTE_TIME = 0.10f;
 
-        /// &lt;summary&gt;
-        /// JUMP_BUFFER_TIME = 0.11 sec input buffer for jump (PRD §6.2)
-        /// &lt;/summary&gt;
-        public static readonly float JUMP_BUFFER_TIME = 0.11f;
+        /// <summary>
+        /// JUMP_BUFFER_TIME = 0.08 sec input buffer for jump (PRD §6.2)
+        /// </summary>
+        public static readonly float JUMP_BUFFER_TIME = 0.08f;
 
-        /// &lt;summary&gt;
-        /// TILE_SIZE = 1.0 Unity units per tile (PRD §2.1)
-        /// &lt;/summary&gt;
+        /// <summary>
+        /// TILE_SIZE = 1.0 Unity units per tile (16 × 16 px tile size, PRD §2.1)
+        /// </summary>
         public static readonly float TILE_SIZE = 1.0f;
     }
 }

@@ -24,27 +24,32 @@ namespace Core.Input
 
         public InputState Current { get; private set; }
 
-        // Default bindings as per PRD §7.1:
-        // Left/Right: Arrow keys
-        // Jump: Z or Space
-        // Run: X or Left Shift
-        // Crouch: Down Arrow
-        // Shoot: C or Mouse0
-        // Pause: Escape or P
+        // Input bindings as per PRD §5:
+        // | Action        | Primary          | Alt   |
+        // |-------------- |------------------|-------|
+        // | Move Left     | ←                |  A    |
+        // | Move Right    | →                |  D    |
+        // | Jump          | ↑                | Space |
+        // | Crouch        | ↓                |  S    |
+        // | Run / Sprint  | Hold LMB (0)     | Shift |
+        // | Shoot Fireball| Left Mouse Click | Ctrl  |
+        // | Pause/Menu    | Right Mouse Click| Esc   |
 
-        // TODO: Replace with SerializedDictionary&lt;KeyCode, ...&gt; for future rebinding
-        [Header("Key Bindings (change in Inspector for prototyping)")]
+        [Header("Key Bindings (PRD §5, change in Inspector for prototyping)")]
         [SerializeField] private KeyCode leftKey = KeyCode.LeftArrow;
+        [SerializeField] private KeyCode leftKeyAlt = KeyCode.A;
         [SerializeField] private KeyCode rightKey = KeyCode.RightArrow;
-        [SerializeField] private KeyCode jumpKey1 = KeyCode.Z;
-        [SerializeField] private KeyCode jumpKey2 = KeyCode.Space;
-        [SerializeField] private KeyCode runKey1 = KeyCode.X;
-        [SerializeField] private KeyCode runKey2 = KeyCode.LeftShift;
+        [SerializeField] private KeyCode rightKeyAlt = KeyCode.D;
+        [SerializeField] private KeyCode jumpKey = KeyCode.UpArrow;
+        [SerializeField] private KeyCode jumpKeyAlt = KeyCode.Space;
         [SerializeField] private KeyCode crouchKey = KeyCode.DownArrow;
-        [SerializeField] private KeyCode shootKey1 = KeyCode.C;
-        [SerializeField] private int shootMouseButton = 0; // left click
-        [SerializeField] private KeyCode pauseKey1 = KeyCode.Escape;
-        [SerializeField] private KeyCode pauseKey2 = KeyCode.P;
+        [SerializeField] private KeyCode crouchKeyAlt = KeyCode.S;
+        [SerializeField] private KeyCode runKeyAlt = KeyCode.LeftShift;
+        [SerializeField] private int runMouseButton = 0; // left mouse button
+        [SerializeField] private KeyCode shootKeyAlt = KeyCode.LeftControl;
+        [SerializeField] private int shootMouseButton = 0; // left mouse button
+        [SerializeField] private KeyCode pauseKeyAlt = KeyCode.Escape;
+        [SerializeField] private int pauseMouseButton = 1; // right mouse button
 
         void Awake()
         {
@@ -67,27 +72,31 @@ namespace Core.Input
             InputState state = new InputState();
 
             // Horizontal axis: digital
-            float left = UnityEngine.Input.GetKey(leftKey) ? -1f : 0f;
-            float right = UnityEngine.Input.GetKey(rightKey) ? 1f : 0f;
+            float left = (UnityEngine.Input.GetKey(leftKey) || UnityEngine.Input.GetKey(leftKeyAlt)) ? -1f : 0f;
+            float right = (UnityEngine.Input.GetKey(rightKey) || UnityEngine.Input.GetKey(rightKeyAlt)) ? 1f : 0f;
             state.moveAxis = left + right;
             if (state.moveAxis != 0)
                 state.moveAxis = Mathf.Clamp(state.moveAxis, -1f, 1f);
 
             // Jump
-            state.jumpPressed = UnityEngine.Input.GetKeyDown(jumpKey1) || UnityEngine.Input.GetKeyDown(jumpKey2);
-            state.jumpHeld = UnityEngine.Input.GetKey(jumpKey1) || UnityEngine.Input.GetKey(jumpKey2);
-
-            // Run
-            state.runHeld = UnityEngine.Input.GetKey(runKey1) || UnityEngine.Input.GetKey(runKey2);
+            state.jumpPressed = UnityEngine.Input.GetKeyDown(jumpKey) || UnityEngine.Input.GetKeyDown(jumpKeyAlt);
+            state.jumpHeld = UnityEngine.Input.GetKey(jumpKey) || UnityEngine.Input.GetKey(jumpKeyAlt);
 
             // Crouch
-            state.crouch = UnityEngine.Input.GetKey(crouchKey);
+            state.crouch = UnityEngine.Input.GetKey(crouchKey) || UnityEngine.Input.GetKey(crouchKeyAlt);
 
-            // Shoot
-            state.shootPressed = UnityEngine.Input.GetKeyDown(shootKey1) || UnityEngine.Input.GetMouseButtonDown(shootMouseButton);
+            // Run: held if MouseButton(0) *or* Shift
+            state.runHeld = UnityEngine.Input.GetMouseButton(runMouseButton) || UnityEngine.Input.GetKey(runKeyAlt);
 
-            // Pause
-            state.pausePressed = UnityEngine.Input.GetKeyDown(pauseKey1) || UnityEngine.Input.GetKeyDown(pauseKey2);
+            // Shoot: fires only if MouseButtonDown(0) and not holding run, or Ctrl
+            // (PlayerController must check runHeld to gate fireball)
+            bool mouse0Down = UnityEngine.Input.GetMouseButtonDown(shootMouseButton);
+            bool holdingRun = UnityEngine.Input.GetMouseButton(runMouseButton) || UnityEngine.Input.GetKey(runKeyAlt);
+            bool ctrlDown = UnityEngine.Input.GetKeyDown(shootKeyAlt);
+            state.shootPressed = (mouse0Down && !holdingRun) || ctrlDown;
+
+            // Pause: fires on MouseButtonDown(1) (right click), or Escape
+            state.pausePressed = UnityEngine.Input.GetMouseButtonDown(pauseMouseButton) || UnityEngine.Input.GetKeyDown(pauseKeyAlt);
 
             return state;
         }

@@ -17,13 +17,29 @@ namespace Gameplay.Player
         public bool isGroundedDebug = true;
 
         [Header("Movement Parameters (defaults from PlayerConstants)")]
+        [Tooltip("WALK_SPEED: 2.5 tiles/s (PRD §6.2)")]
         public float walkSpeed = PlayerConstants.WALK_SPEED;
+        [Tooltip("RUN_SPEED: 4.0 tiles/s (PRD §6.2)")]
         public float runSpeed = PlayerConstants.RUN_SPEED;
+        [Tooltip("RUN_ACCEL_TIME: 0.5 s (PRD §6.2, derived)")]
         public float runAccelTime = PlayerConstants.RUN_ACCEL_TIME;
+        [Tooltip("GRAVITY: 30 tiles/s² (PRD §6.2)")]
         public float gravity = PlayerConstants.GRAVITY;
+        [Tooltip("JUMP_INITIAL_VELOCITY: 8.5 tiles/s (PRD §6.2)")]
         public float jumpInitialVelocity = PlayerConstants.JUMP_INITIAL_VELOCITY;
+        [Tooltip("COYOTE_TIME: 0.10 s (PRD §6.2)")]
         public float coyoteTime = PlayerConstants.COYOTE_TIME;
+        [Tooltip("JUMP_BUFFER_TIME: 0.08 s (PRD §6.2)")]
         public float jumpBufferTime = PlayerConstants.JUMP_BUFFER_TIME;
+
+        /// <summary>
+        /// Returns true if player is holding the run input (left mouse button or shift).
+        /// </summary>
+        public bool IsHoldingRun()
+        {
+            var input = InputManager.Instance != null ? InputManager.Instance.Current : default;
+            return input.runHeld;
+        }
 
         [Header("References")]
         public Rigidbody2D rb;
