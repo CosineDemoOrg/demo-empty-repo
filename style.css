@@ -1,0 +1,50 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #ffb3fe 0%, #b8e2ff 50%, #ffe9ae 100%);
+  font-family: 'Comfortaa', cursive, sans-serif;
+  position: fixed;
+  top: 0; left: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  outline: none;
+  background: transparent;
+}
+
+.rainbow-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: rgba(255,255,255,0.77);
+  font-family: 'Comfortaa', cursive, sans-serif;
+  font-size: 2.7vw;
+  font-weight: bold;
+  color: #b824ff;
+  text-shadow: 0 2px 12px #fff5, 0 2px 2px #ffb3fe;
+  letter-spacing: 0.04em;
+  text-align: center;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
