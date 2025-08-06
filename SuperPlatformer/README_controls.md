@@ -2,15 +2,15 @@
 
 ## Default Controls
 
-| Action      | Keys / Mouse        |
-|-------------|---------------------|
-| Move Left   | Left Arrow          |
-| Move Right  | Right Arrow         |
-| Jump        | Z or Space          |
-| Run         | X or Left Shift     |
-| Crouch      | Down Arrow          |
-| Shoot       | C or Mouse Left     |
-| Pause       | Escape or P         |
+| Action         | Primary                    | Alt         |
+|----------------|---------------------------|-------------|
+| Move Left      | ← (Left Arrow)            | A           |
+| Move Right     | → (Right Arrow)           | D           |
+| Jump           | ↑ (Up Arrow)              | Space       |
+| Crouch         | ↓ (Down Arrow)            | S           |
+| Run / Sprint   | Hold LMB (Mouse Button 0) | Left Shift  |
+| Shoot Fireball | Left Mouse Click          | Left Ctrl   |
+| Pause / Menu   | Right Mouse Click         | Escape      |
 
 *All controls can be changed in the InputManager inspector (see TODO for rebinding support).*
 
@@ -33,7 +33,7 @@
    - In the Inspector, you can toggle "isGroundedDebug" to simulate ground contact, or adjust movement values for quick testing.
 
 4. **Playtest Movement**  
-   - Enter Play mode and use the controls above.
+   - Enter Play mode and use the controls above (see table).
    - Tweak exposed movement fields if desired.
    - *Note: Physics/level collision is stubbed; player will not collide with tiles yet.*
 
